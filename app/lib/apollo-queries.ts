@@ -21,8 +21,9 @@ export const GET_PRODUCT = gql`
       name
       description
       price
+      category
       stock
-      theme
+      image_url
     }
   }
 `;

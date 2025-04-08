@@ -1,5 +1,3 @@
-"use client";
-
 import { Typography, Divider } from "@mui/material";
 
 import { ProductTable } from "@/app/components/product-table";

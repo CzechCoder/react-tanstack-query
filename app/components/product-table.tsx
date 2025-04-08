@@ -7,7 +7,7 @@ import { GET_PRODUCTS } from "@/app/lib/apollo-queries";
 import client from "@/app/lib/apollo-client";
 
 export const ProductTable = () => {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<Product[]>({
     queryKey: ["products"],
     queryFn: async () => {
       const res = await client.query({ query: GET_PRODUCTS });
@@ -16,15 +16,12 @@ export const ProductTable = () => {
   });
 
   if (isLoading) return <p>Loading products...</p>;
-  if (error) {
-    console.error("Error loading data: ", error);
-    return <p>Error loading products.</p>;
-  }
+  if (error) return <p>Error loading products.</p>;
 
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden">
       {!data || data.length === 0 ? (
-        <>There are not products data.</>
+        <>There are no products data.</>
       ) : (
         <table className="min-w-full text-left">
           <thead className="bg-gray-200">

@@ -51,10 +51,6 @@ const { handleRequest } = createYoga({
         product: async (_: any, { id }: { id: string }) =>
           await prisma.products.findUnique({ where: { id: Number(id) } }),
       },
-      // Product: {
-      //   imageUrl: (parent) => parent.image_url,
-      //   createdAt: (parent) => parent.created_at?.toISOString(),
-      // },
       Mutation: {
         updateProduct: async (
           _: any,
@@ -66,7 +62,7 @@ const { handleRequest } = createYoga({
             name?: string;
             description?: string;
             price?: number;
-            imageUrl: string;
+            image_url: string;
           }
         ) => {
           return await prisma.products.update({

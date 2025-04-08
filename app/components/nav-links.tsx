@@ -5,10 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import BackupTableIcon from "@mui/icons-material/BackupTable";
 
-const links = [{ name: "Products Table", href: "/", icon: BackupTableIcon }];
+const links = [
+  { name: "Products", href: "/", icon: BackupTableIcon, refName: "product" },
+];
 
 export default function NavLinks() {
   const pathname = usePathname();
+  const pathnameRef = pathname.split("/");
   return (
     <>
       {links.map((link) => {
@@ -21,7 +24,7 @@ export default function NavLinks() {
               "flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium bg-tanstack-btn hover:text-white md:flex-none md:justify-start md:p-2 md:px-3",
               {
                 "border border-solid border-tanstack-500 text-tanstack-500":
-                  pathname === link.href,
+                  pathname === link.href || pathnameRef[1] === link.refName,
               }
             )}
           >

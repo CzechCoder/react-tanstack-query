@@ -1,5 +1,15 @@
-"use client";
+import { ProductDetail } from "./product-detail";
 
-export default function ProductDetailPage() {
-  return <div>Product</div>;
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  return (
+    <main className="p-6">
+      <ProductDetail id={id} />
+    </main>
+  );
 }
