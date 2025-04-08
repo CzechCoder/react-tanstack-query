@@ -3,14 +3,9 @@
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import TableViewIcon from "@mui/icons-material/TableView";
 import BackupTableIcon from "@mui/icons-material/BackupTable";
-import ListAltIcon from "@mui/icons-material/ListAlt";
 
-const links = [
-  { name: "Table Server", href: "/", icon: BackupTableIcon },
-  { name: "Table Client", href: "/table-client", icon: TableViewIcon },
-];
+const links = [{ name: "Products Table", href: "/", icon: BackupTableIcon }];
 
 export default function NavLinks() {
   const pathname = usePathname();

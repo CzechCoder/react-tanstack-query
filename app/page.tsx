@@ -15,7 +15,6 @@ export default function Home() {
         LEGO Products Table
       </Typography>
       <Divider sx={{ my: 2 }} />
-
       <ProductTable />
     </main>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import client from "@/app/graphql/client";
+import client from "@/app/lib/apollo-client";
 import { queryClient } from "@/app/lib/query-client";
 
 import { ApolloProvider } from "@apollo/client";
