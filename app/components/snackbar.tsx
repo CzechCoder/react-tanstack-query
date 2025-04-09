@@ -1,17 +1,17 @@
-import { Alert, Snackbar } from "@mui/material";
+import { Alert, AlertColor, Snackbar } from "@mui/material";
 import { Dispatch, FC, SetStateAction, useCallback } from "react";
 
 type CustomSnackbarProps = {
   snackState: {
     open: boolean;
     message: string;
-    severity: AlertSeverity;
+    severity: AlertColor;
   };
   onClose: Dispatch<
     SetStateAction<{
       open: boolean;
       message: string;
-      severity: AlertSeverity;
+      severity: AlertColor;
     }>
   >;
 };

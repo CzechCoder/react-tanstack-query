@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import client from "@/app/lib/apollo-client";
 import Image from "next/image";
 import {
+  type AlertColor,
   Box,
   Button,
   Divider,
@@ -13,40 +14,39 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-
-type FormData = {
-  name: string;
-  description: string;
-  price: string;
-  category: string;
-  stock: string;
-};
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { GET_PRODUCT, UPDATE_PRODUCT } from "@/app/lib/apollo-queries";
 import { BackButton } from "@/app/components/back-button";
 import { CustomSnackbar } from "@/app/components/snackbar";
 
+const productSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string().optional(),
+  price: z.string().refine((val) => !isNaN(parseFloat(val)), {
+    message: "Price must be a number",
+  }),
+  category: z.string().min(1, "Category is required"),
+  stock: z.string().refine((val) => !isNaN(parseInt(val)), {
+    message: "Stock must be a number",
+  }),
+});
+
+type FormData = z.infer<typeof productSchema>;
+
 export const ProductDetail = ({ id }: { id: string }) => {
-  // state for the custom snackbar, keep it all in one object for readability and manipulation
   const [snackState, setSnackState] = useState<{
     open: boolean;
     message: string;
-    severity: AlertSeverity;
+    severity: AlertColor;
   }>({
     open: false,
     message: "",
-    severity: "success",
-  });
-  // state to gather inputs
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    description: "",
-    price: "",
-    category: "",
-    stock: "",
+    severity: "success" as AlertColor,
   });
 
-  // fetch product's data, but only when the id arrives
   const { data, error, isLoading } = useQuery<Product>({
     queryKey: ["product", id],
     queryFn: async () => {
@@ -59,32 +59,34 @@ export const ProductDetail = ({ id }: { id: string }) => {
     enabled: !!id,
   });
 
-  // set product's data to state for editing with inputs
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(productSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      price: "",
+      category: "",
+      stock: "",
+    },
+  });
+
   useEffect(() => {
     if (data) {
-      setFormData((prev) => {
-        // (shallow check) to avoid unnecessary render cycle
-        if (
-          prev.name !== data.name ||
-          prev.description !== data.description ||
-          prev.price !== String(data.price) ||
-          prev.category !== data.category ||
-          prev.stock !== String(data.stock)
-        ) {
-          return {
-            name: data.name ?? "",
-            description: data.description ?? "",
-            price: data.price?.toString() ?? "",
-            category: data.category ?? "",
-            stock: data.stock?.toString() ?? "",
-          };
-        }
-        return prev;
+      reset({
+        name: data.name,
+        description: data.description ?? "",
+        price: data.price?.toString(),
+        category: data.category,
+        stock: data.stock?.toString(),
       });
     }
-  }, [data]);
+  }, [data, reset]);
 
-  // send data to DB, change number values to appropriate formats
   const { isPending, mutate } = useMutation({
     mutationFn: async (formData: FormData) => {
       return await client.mutate({
@@ -99,7 +101,6 @@ export const ProductDetail = ({ id }: { id: string }) => {
         },
       });
     },
-    // open success snack to let user know it's all good
     onSuccess: () => {
       setSnackState({
         open: true,
@@ -107,7 +108,6 @@ export const ProductDetail = ({ id }: { id: string }) => {
         severity: "success",
       });
     },
-    // inform the user something went wrong
     onError: () => {
       setSnackState({
         open: true,
@@ -117,22 +117,9 @@ export const ProductDetail = ({ id }: { id: string }) => {
     },
   });
 
-  // gather inputs
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [e.target.name]: e.target.value,
-    }));
-  }, []);
-
-  // submit form
-  const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      mutate(formData);
-    },
-    [formData, mutate]
-  );
+  const onSubmit = (formData: FormData) => {
+    mutate(formData);
+  };
 
   return (
     <>
@@ -182,49 +169,49 @@ export const ProductDetail = ({ id }: { id: string }) => {
           <Grid size={1}>
             <Box
               component="form"
-              onSubmit={handleSubmit}
               noValidate
               autoComplete="off"
+              onSubmit={handleSubmit(onSubmit)}
               sx={{ "& > :not(style)": { m: 1 } }}
             >
               <TextField
                 fullWidth
                 label="Name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
+                {...register("name")}
+                error={!!errors.name}
+                helperText={errors.name?.message}
               />
               <TextField
                 fullWidth
                 label="Description"
-                name="description"
-                value={formData.description}
+                {...register("description")}
+                error={!!errors.description}
+                helperText={errors.description?.message}
                 multiline
                 rows={2}
-                onChange={handleChange}
               />
               <TextField
                 fullWidth
                 type="number"
                 label="Price"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
+                {...register("price")}
+                error={!!errors.price}
+                helperText={errors.price?.message}
               />
               <TextField
                 fullWidth
                 label="Category"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
+                {...register("category")}
+                error={!!errors.category}
+                helperText={errors.category?.message}
               />
               <TextField
                 fullWidth
                 type="number"
                 label="Stock"
-                name="stock"
-                value={formData.stock}
-                onChange={handleChange}
+                {...register("stock")}
+                error={!!errors.stock}
+                helperText={errors.stock?.message}
               />
               <Button type="submit" variant="contained" disabled={isPending}>
                 Save changes
