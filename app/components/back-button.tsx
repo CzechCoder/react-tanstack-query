@@ -13,7 +13,14 @@ export const BackButton = () => {
   };
 
   return (
-    <Button variant="text" onClick={goBack}>
+    <Button
+      variant="text"
+      onClick={goBack}
+      disableRipple
+      disableFocusRipple
+      disableTouchRipple
+      style={{ backgroundColor: "transparent" }}
+    >
       <ArrowBackIcon color="disabled" fontSize="large" />
     </Button>
   );

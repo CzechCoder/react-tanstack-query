@@ -62,7 +62,8 @@ const { handleRequest } = createYoga({
             name?: string;
             description?: string;
             price?: number;
-            image_url: string;
+            category?: string;
+            stock?: number;
           }
         ) => {
           return await prisma.products.update({

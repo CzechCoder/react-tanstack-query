@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { GET_PRODUCTS } from "@/app/lib/apollo-queries";
 import client from "@/app/lib/apollo-client";
+import { Typography } from "@mui/material";
 
 export const ProductTable = () => {
   const { data, isLoading, error } = useQuery<Product[]>({
@@ -15,13 +16,25 @@ export const ProductTable = () => {
     },
   });
 
-  if (isLoading) return <p>Loading products...</p>;
-  if (error) return <p>Error loading products.</p>;
+  if (isLoading)
+    return (
+      <Typography variant="body1" color="primary">
+        Loading products...
+      </Typography>
+    );
+  if (error)
+    return (
+      <Typography variant="body1" color="primary">
+        Error loading products.
+      </Typography>
+    );
 
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden">
       {!data || data.length === 0 ? (
-        <>There are no products data.</>
+        <Typography variant="body1" color="primary">
+          There are no products data.
+        </Typography>
       ) : (
         <table className="min-w-full text-left">
           <thead className="bg-gray-200">
