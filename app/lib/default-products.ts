@@ -1,4 +1,4 @@
-export const defaultProducts = [
+export const defaultProducts: Product[] = [
   {
     name: "LEGO Classic Bricks and Animals",
     description:

@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Button } from "@mui/material";
 
 export const BackButton = () => {
   const goBack = () => {

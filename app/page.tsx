@@ -1,7 +1,6 @@
 import { Typography, Divider } from "@mui/material";
 
 import { ProductTable } from "@/app/components/product-table";
-import { ResetButton } from "@/app/components/reset-button";
 
 export default function Home() {
   return (
@@ -15,8 +14,6 @@ export default function Home() {
       </Typography>
       <Divider sx={{ my: 2 }} />
       <ProductTable />
-      <Divider sx={{ my: 2 }} />
-      <ResetButton />
     </main>
   );
 }

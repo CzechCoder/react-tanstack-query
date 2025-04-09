@@ -1,4 +1,4 @@
-import { ProductDetail } from "./product-detail";
+import { ProductDetail } from "@/app/product/[id]/product-detail";
 
 export default async function Page({
   params,

@@ -5,7 +5,7 @@ import { Metadata } from "next";
 import { Providers } from "@/app/components/providers";
 import SideNav from "@/app/components/sidenav";
 import theme from "@/theme";
-import "./globals.css";
+import "@/app/globals.css";
 
 export const metadata: Metadata = {
   title: {

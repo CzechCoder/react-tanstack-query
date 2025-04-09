@@ -1,6 +1,8 @@
 import { createYoga, createSchema } from "graphql-yoga";
 import { PrismaClient } from "@prisma/client";
 
+import { defaultProducts } from "@/app/lib/default-products";
+
 const prisma = new PrismaClient();
 
 // Conversion types table from Prisma to GraphQL
@@ -79,7 +81,16 @@ const { handleRequest } = createYoga({
         },
         resetAllProducts: async () => {
           try {
-            console.log("function TBD");
+            await prisma.products.deleteMany();
+            await prisma.$executeRaw`ALTER SEQUENCE "products_id_seq" RESTART WITH 1;`;
+
+            const createProductsPromises = defaultProducts.map((product) =>
+              prisma.products.create({
+                data: product,
+              })
+            );
+
+            await Promise.all(createProductsPromises);
 
             return {
               success: true,

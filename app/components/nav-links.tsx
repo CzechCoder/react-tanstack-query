@@ -1,9 +1,9 @@
 "use client";
 
-import clsx from "clsx";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import BackupTableIcon from "@mui/icons-material/BackupTable";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import clsx from "clsx";
 
 const links = [
   { name: "Products", href: "/", icon: BackupTableIcon, refName: "product" },

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import client from "@/app/lib/apollo-client";
 import Image from "next/image";
 import {
   type AlertColor,
@@ -25,6 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { GET_PRODUCT, UPDATE_PRODUCT } from "@/app/lib/apollo-queries";
 import { BackButton } from "@/app/components/back-button";
 import { CustomSnackbar } from "@/app/components/snackbar";
+import client from "@/app/lib/apollo-client";
 
 const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
