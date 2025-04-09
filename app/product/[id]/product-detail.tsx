@@ -9,13 +9,17 @@ import {
   Box,
   Button,
   Divider,
+  FormControl,
   Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { GET_PRODUCT, UPDATE_PRODUCT } from "@/app/lib/apollo-queries";
@@ -25,16 +29,41 @@ import { CustomSnackbar } from "@/app/components/snackbar";
 const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),
-  price: z.string().refine((val) => !isNaN(parseFloat(val)), {
-    message: "Price must be a number",
-  }),
-  category: z.string().min(1, "Category is required"),
-  stock: z.string().refine((val) => !isNaN(parseInt(val)), {
-    message: "Stock must be a number",
-  }),
+  price: z.string().refine(
+    (val) => {
+      const num = parseFloat(val);
+      return !isNaN(num) && num >= 0;
+    },
+    {
+      message: "Price must be a non-negative number",
+    }
+  ),
+  category: z.string(),
+  stock: z.string().refine(
+    (val) => {
+      const num = parseInt(val);
+      return !isNaN(num) && num >= 0 && Number.isInteger(num);
+    },
+    {
+      message: "Stock must be a non-negative number",
+    }
+  ),
 });
 
 type FormData = z.infer<typeof productSchema>;
+
+const legoCategories: string[] = [
+  "Architecture",
+  "City",
+  "Classic",
+  "Creator",
+  "Friends",
+  "Harry Potter",
+  "Ninjago",
+  "Minecraft",
+  "Star Wars",
+  "Technic",
+];
 
 export const ProductDetail = ({ id }: { id: string }) => {
   const [snackState, setSnackState] = useState<{
@@ -60,6 +89,7 @@ export const ProductDetail = ({ id }: { id: string }) => {
   });
 
   const {
+    control,
     register,
     handleSubmit,
     reset,
@@ -70,7 +100,7 @@ export const ProductDetail = ({ id }: { id: string }) => {
       name: "",
       description: "",
       price: "",
-      category: "",
+      category: "Architecture",
       stock: "",
     },
   });
@@ -81,7 +111,7 @@ export const ProductDetail = ({ id }: { id: string }) => {
         name: data.name,
         description: data.description ?? "",
         price: data.price?.toString(),
-        category: data.category,
+        category: data.category || "City",
         stock: data.stock?.toString(),
       });
     }
@@ -149,7 +179,7 @@ export const ProductDetail = ({ id }: { id: string }) => {
         <Typography variant="body1">No product data found.</Typography>
       )}
       {data && (
-        <Grid container spacing={2} columns={2} maxWidth="lg">
+        <Grid container spacing={2} columns={{ xs: 1, sm: 2 }} maxWidth="lg">
           <Grid size={1}>
             <Box maxWidth="100%" height="auto" position="relative">
               <Image
@@ -195,21 +225,40 @@ export const ProductDetail = ({ id }: { id: string }) => {
                 type="number"
                 label="Price"
                 {...register("price")}
+                slotProps={{ htmlInput: { min: 0 } }}
                 error={!!errors.price}
                 helperText={errors.price?.message}
               />
-              <TextField
-                fullWidth
-                label="Category"
-                {...register("category")}
-                error={!!errors.category}
-                helperText={errors.category?.message}
-              />
+              <FormControl fullWidth error={!!errors.category}>
+                <InputLabel id="category-label">Category</InputLabel>
+                <Controller
+                  name="category"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      labelId="category-label"
+                      id="category"
+                      label="Category"
+                    >
+                      {legoCategories.map((cat) => (
+                        <MenuItem key={cat} value={cat}>
+                          {cat}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+                <Typography variant="caption" color="error">
+                  {errors.category?.message}
+                </Typography>
+              </FormControl>
               <TextField
                 fullWidth
                 type="number"
                 label="Stock"
                 {...register("stock")}
+                slotProps={{ htmlInput: { min: 0 } }}
                 error={!!errors.stock}
                 helperText={errors.stock?.message}
               />

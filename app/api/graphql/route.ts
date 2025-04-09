@@ -43,6 +43,12 @@ const { handleRequest } = createYoga({
       stock: Int!
       image_url: String
       ): Product
+      resetAllProducts: ResetResponse
+    }
+
+    type ResetResponse {
+      success: Boolean
+      message: String
     }
   `,
     resolvers: {
@@ -70,6 +76,22 @@ const { handleRequest } = createYoga({
             where: { id: Number(id) },
             data,
           });
+        },
+        resetAllProducts: async () => {
+          try {
+            console.log("function TBD");
+
+            return {
+              success: true,
+              message:
+                "All products data have been reset to their original values.",
+            };
+          } catch {
+            return {
+              success: false,
+              message: "Failed to reset the products data.",
+            };
+          }
         },
       },
     },

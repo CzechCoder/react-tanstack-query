@@ -54,3 +54,12 @@ export const UPDATE_PRODUCT = gql`
     }
   }
 `;
+
+export const RESET_ALL_PRODUCTS = gql`
+  mutation ResetAllProducts {
+    resetAllProducts {
+      success
+      message
+    }
+  }
+`;
