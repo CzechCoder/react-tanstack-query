@@ -19,8 +19,6 @@ export const ResetButton = ({ onReset }: { onReset: () => void }) => {
     severity: "success" as AlertColor,
   });
 
-  // TODO Limit resetting data to once in a few minutes to prevent request flooding.
-
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
       const { data } = await client.mutate({
@@ -29,7 +27,6 @@ export const ResetButton = ({ onReset }: { onReset: () => void }) => {
       return data.resetAllProducts;
     },
     onSuccess: (data) => {
-      console.log(data);
       if (data.success) {
         setSnackState({
           open: true,
