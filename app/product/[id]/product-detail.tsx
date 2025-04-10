@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import {
   type AlertColor,
   Box,
   Button,
+  CircularProgress,
   Divider,
   FormControl,
   Grid,
@@ -16,6 +17,8 @@ import {
   Stack,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
@@ -66,6 +69,8 @@ const legoCategories: string[] = [
 ];
 
 export const ProductDetail = ({ id }: { id: string }) => {
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const [snackState, setSnackState] = useState<{
     open: boolean;
     message: string;
@@ -151,13 +156,21 @@ export const ProductDetail = ({ id }: { id: string }) => {
     mutate(formData);
   };
 
+  const categoryOptions = useMemo(() => {
+    return legoCategories.map((cat) => (
+      <MenuItem key={cat} value={cat}>
+        {cat}
+      </MenuItem>
+    ));
+  }, []);
+
   return (
     <>
       <Stack direction="row">
         <BackButton />
         <Typography
-          component="h3"
-          variant="h3"
+          component="h4"
+          variant={isSmall ? "h4" : "h3"}
           className="text-2xl font-bold mb-4"
         >
           Product detail
@@ -241,11 +254,7 @@ export const ProductDetail = ({ id }: { id: string }) => {
                       id="category"
                       label="Category"
                     >
-                      {legoCategories.map((cat) => (
-                        <MenuItem key={cat} value={cat}>
-                          {cat}
-                        </MenuItem>
-                      ))}
+                      {categoryOptions}
                     </Select>
                   )}
                 />
@@ -262,7 +271,16 @@ export const ProductDetail = ({ id }: { id: string }) => {
                 error={!!errors.stock}
                 helperText={errors.stock?.message}
               />
-              <Button type="submit" variant="contained" disabled={isPending}>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={isPending}
+                startIcon={
+                  isPending ? (
+                    <CircularProgress size={20} color="inherit" />
+                  ) : null
+                }
+              >
                 Save changes
               </Button>
             </Box>
